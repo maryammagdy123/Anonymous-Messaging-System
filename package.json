@@ -1,0 +1,27 @@
+{
+  "name": "sara7a-app-assignment-10",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "cross-env NODE_ENV=development node --watch-path=. src/main.js",
+    "start:prod": "cross-env NODE_ENV=production node src/main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "joi": "^18.0.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.2.3",
+    "nodemailer": "^8.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
+  }
+}

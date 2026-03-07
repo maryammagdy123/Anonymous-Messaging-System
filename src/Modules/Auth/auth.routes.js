@@ -1,0 +1,19 @@
+import { Router } from "express";
+import * as controller from "./auth.controller.js";
+import { verifyTokenMiddleware } from "../../Middleware/auth.middleware.js";
+import { validation } from "../../Middleware/validation.middleware.js";
+import { loginSchema, registerSchema } from "./auth.validation.js";
+
+const router = Router();
+//public routes
+router.post("/signup", validation(registerSchema, "body"), controller.signup);
+router.post("/login", validation(loginSchema,"body"), controller.login);
+// router.post("login-with-google", controller.loginWithGoogle);
+router.post("/confirm-otp", controller.confirmOtp);
+/*===========Protected routes============= */
+// router.post(
+//   "/refresh-token",
+//   verifyTokenMiddleware("strict"),
+//   controller.refreshToken,
+// );
+export default router;
