@@ -3,11 +3,17 @@ import * as controller from "./auth.controller.js";
 import { verifyTokenMiddleware } from "../../Middleware/auth.middleware.js";
 import { validation } from "../../Middleware/validation.middleware.js";
 import { loginSchema, registerSchema } from "./auth.validation.js";
+import { uploadFiles } from "../../Utils/multer.utils.js";
 
 const router = Router();
 //public routes
-router.post("/signup", validation(registerSchema, "body"), controller.signup);
-router.post("/login", validation(loginSchema,"body"), controller.login);
+router.post(
+  "/signup",
+  uploadFiles().single("profilePicture"),
+  validation(registerSchema, "body"),
+  controller.signup,
+);
+router.post("/login", validation(loginSchema, "body"), controller.login);
 // router.post("login-with-google", controller.loginWithGoogle);
 router.post("/confirm-otp", controller.confirmOtp);
 /*===========Protected routes============= */
