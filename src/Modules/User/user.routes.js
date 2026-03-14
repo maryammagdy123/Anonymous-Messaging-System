@@ -6,6 +6,7 @@ import {
   changePasswordSchema,
   updateProfileSchema,
 } from "./user.validation.js";
+import { uploadFiles } from "../../Utils/multer.utils.js";
 
 const router = Router();
 
@@ -21,6 +22,12 @@ router.put(
   verifyTokenMiddleware("strict"),
   validation(changePasswordSchema),
   controller.updatePassword,
+);
+router.put(
+  "/profile/upload-profile-picture",
+  verifyTokenMiddleware("strict"),
+  uploadFiles().single("profile-picture"),
+  controller.uploadProfilePic,
 );
 router.delete(
   "/profile",
