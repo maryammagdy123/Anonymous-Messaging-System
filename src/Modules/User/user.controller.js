@@ -64,3 +64,21 @@ export const deleteProfile = async (req, res, next) => {
     next(error);
   }
 };
+
+export const uploadProfilePic = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+   
+    await service.profilePic(userId);
+    successResponse({
+      res,
+      status: 200,
+      message: "Profile picture uploaded successfully!",
+      data: {
+        success: true,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
