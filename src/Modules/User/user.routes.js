@@ -7,6 +7,7 @@ import {
   updateProfileSchema,
 } from "./user.validation.js";
 import { uploadFiles } from "../../Utils/multer.utils.js";
+import { fileValidation } from "../../Middleware/file-validation.middleware.js";
 
 const router = Router();
 
@@ -27,6 +28,7 @@ router.put(
   "/profile/upload-profile-picture",
   verifyTokenMiddleware("strict"),
   uploadFiles().single("profile-picture"),
+  fileValidation,
   controller.uploadProfilePic,
 );
 router.delete(
