@@ -70,7 +70,7 @@ export const profilePic = async (req, res, next) => {
     const userId = req.user.id;
 
     const updatedUser = await service.uploadProfilePic(userId, req.file);
-    successResponse({
+    return successResponse({
       res,
       status: 200,
       message: "Profile picture uploaded successfully!",

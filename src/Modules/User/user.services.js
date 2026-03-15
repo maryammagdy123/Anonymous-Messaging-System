@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { userRepo } from "../../DB/Repo/index.js";
 import {
   compare,
@@ -67,6 +68,7 @@ export const deleteProfile = async (userId) => {
   return true;
 };
 export const uploadProfilePic = async (userId, file) => {
+  const existUser = await userRepo.findById({ id:userId});
   const user = await userRepo.updateOne({
     filter: { _id: userId },
     update: { profilePicture: file.path },
@@ -74,5 +76,8 @@ export const uploadProfilePic = async (userId, file) => {
   if (!user) {
     NotFoundException({ message: "User not found!" });
   }
+
+  //delete old uploaded profile picture , only the last one remains
+  fs.unlinkSync(existUser.profilePicture);
   return user;
 };

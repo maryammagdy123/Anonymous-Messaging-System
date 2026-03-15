@@ -17,10 +17,10 @@ export const uploadFiles = (
     },
     storage: diskStorage({
       destination: (req, file, cb) => {
-        if (!fs.existsSync(`upload/${req.user.id}`)) {
-          fs.mkdirSync(`upload/${req.user.id}`);
+        if (!fs.existsSync(`uploads/${req.user.id}`)) {
+          fs.mkdirSync(`uploads/${req.user.id}`, { recursive: true });
         }
-        cb(null, `upload/${req.user.id}`);
+        cb(null, `uploads/${req.user.id}`);
       },
       filename: (req, file, cb) => {
         cb(null, Date.now() + Math.random() + "__" + file.originalname);

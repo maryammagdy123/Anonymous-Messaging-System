@@ -27,7 +27,7 @@ router.put(
 router.put(
   "/profile/upload-profile-picture",
   verifyTokenMiddleware("strict"),
-  uploadFiles().single("profile-picture"),
+  uploadFiles().single("image"),
   fileValidation,
   controller.profilePic,
 );
