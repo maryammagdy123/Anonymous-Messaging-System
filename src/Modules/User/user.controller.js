@@ -81,3 +81,20 @@ export const profilePic = async (req, res, next) => {
     next(error);
   }
 };
+
+export const coverPhoto = async (req,res,next) => {
+  try {
+    const uploadedCover = await service.uploadCoverPhotos(req.user, req.files);
+    return successResponse({
+      res,
+      status: 200,
+      message: "Profile picture uploaded successfully!",
+      data: {
+        success: true,
+        "cover-photos": uploadedCover,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
