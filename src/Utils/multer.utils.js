@@ -1,8 +1,15 @@
 import fs from "node:fs";
 import multer, { diskStorage } from "multer";
 import { BadRequestException } from "./Response/error.response.js";
+import { resolve } from "node:path";
+allowedFormat = {
+  image: ["image/png", "image/jpg", "image/jpeg", "image/gif"],
+  video: ["video/mp4"],
+};
 export const uploadFiles = (
-  allowedFormat = ["image/png", "image/jpg", "image/jpeg", "image/gif"],
+  customPath = "general",
+  validation = [],
+  size = 5,
 ) => {
   return multer({
     fileFilter: (req, file, cb) => {
@@ -17,13 +24,17 @@ export const uploadFiles = (
     },
     storage: diskStorage({
       destination: (req, file, cb) => {
-        if (!fs.existsSync(`uploads/${req.user.id}`)) {
-          fs.mkdirSync(`uploads/${req.user.id}`, { recursive: true });
+        let filePath = resolve(`upload ${customPath}`);
+        if (!fs.existsSync(filePath)) {
+          fs.mkdirSync(filePath, { recursive: true });
         }
-        cb(null, `uploads/${req.user.id}`);
+        cb(null, filePath);
       },
       filename: (req, file, cb) => {
-        cb(null, Date.now() + Math.random() + "__" + file.originalname);
+        let customFileName =
+          Date.now() + Math.random() + "__" + file.originalname;
+        file.finalPath = `upload/${customPath}/${customFileName}`;
+        cb(null, customFileName);
       },
     }),
   });
