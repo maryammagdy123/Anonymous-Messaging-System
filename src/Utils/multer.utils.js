@@ -13,7 +13,7 @@ export const uploadFiles = (
 ) => {
   return multer({
     fileFilter: (req, file, cb) => {
-      if (!allowedFormat.includes(file.mimetype)) {
+      if (!validation.includes(file.mimetype)) {
         return cb(
           BadRequestException({ message: "Invalid file format!" }),
           false,
@@ -24,7 +24,7 @@ export const uploadFiles = (
     },
     storage: diskStorage({
       destination: (req, file, cb) => {
-        let filePath = resolve(`upload ${customPath}`);
+        let filePath = resolve(`upload/${req.user._id}/${customPath}`);
         if (!fs.existsSync(filePath)) {
           fs.mkdirSync(filePath, { recursive: true });
         }
@@ -33,7 +33,7 @@ export const uploadFiles = (
       filename: (req, file, cb) => {
         let customFileName =
           Date.now() + Math.random() + "__" + file.originalname;
-        file.finalPath = `upload/${customPath}/${customFileName}`;
+        file.finalPath = `upload/${req.user._id}/${customPath}/${customFileName}`;
         cb(null, customFileName);
       },
     }),

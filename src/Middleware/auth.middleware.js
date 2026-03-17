@@ -1,7 +1,8 @@
+import { userRepo } from "../DB/Repo/index.js";
 import { verifyToken } from "../Utils/index.js";
 
-export const verifyTokenMiddleware  = (mode = "strict") => {
-  return (req, res, next) => {
+export const verifyTokenMiddleware = (mode = "strict") => {
+  return async (req, res, next) => {
     try {
       const authHeader = req.headers.authorization;
       if (!authHeader) {
@@ -16,8 +17,8 @@ export const verifyTokenMiddleware  = (mode = "strict") => {
       const token = authHeader;
 
       const decoded = verifyToken(token);
-
-      req.user = decoded;
+      const user = await userRepo.findById({ id: decoded.id });
+      req.user = user;
       //req.user.id
 
       next();

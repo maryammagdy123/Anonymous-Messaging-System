@@ -2,7 +2,7 @@ import { successResponse } from "../../Utils/index.js";
 import * as service from "./user.services.js";
 export const profile = async (req, res, next) => {
   try {
-    let userId = req.user.id;
+    let userId = req.user._id;
     const profile = await service.getProfile(userId);
     return successResponse({
       res,
@@ -15,7 +15,7 @@ export const profile = async (req, res, next) => {
 };
 export const updateProfile = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     if (req.body.password) {
       delete req.body.password;
     }
@@ -34,7 +34,7 @@ export const updateProfile = async (req, res, next) => {
 
 export const updatePassword = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     let { currentPassword, newPassword } = req.body;
     const updatedPassword = await service.changePassword(
       userId,
@@ -52,7 +52,7 @@ export const updatePassword = async (req, res, next) => {
 };
 export const deleteProfile = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const result = await service.deleteProfile(userId);
     return successResponse({
       res,
@@ -67,15 +67,14 @@ export const deleteProfile = async (req, res, next) => {
 
 export const profilePic = async (req, res, next) => {
   try {
-    const userId = req.user.id;
-
-    const updatedUser = await service.uploadProfilePic(userId, req.file);
+    const updatedUser = await service.uploadProfilePic(req.user, req.file);
     return successResponse({
       res,
       status: 200,
       message: "Profile picture uploaded successfully!",
       data: {
-        updatedUser,
+        success: true,
+        "profile-pic": updatedUser.profilePicture,
       },
     });
   } catch (error) {

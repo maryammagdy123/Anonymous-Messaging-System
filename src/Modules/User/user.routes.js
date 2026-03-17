@@ -27,21 +27,21 @@ router.patch(
 router.patch(
   "/profile/profile-picture",
   verifyTokenMiddleware("strict"),
-  uploadFiles("user/profile-pic", [...allowedFormat.image], 10).single("image"),
+  uploadFiles("/profile-pic", [...allowedFormat.image], 10).single("image"),
   fileValidation,
   controller.profilePic,
 );
 
-router.patch(
-  "/profile/cover-photo",
-  verifyTokenMiddleware("strict"),
-  uploadFiles("user/cover-photo", [...allowedFormat.image], 10).array(
-    "cover",
-    2,
-  ),
-  fileValidation,
-  controller.coverPhoto,
-);
+// router.patch(
+//   "/profile/cover-photo",
+//   verifyTokenMiddleware("strict"),
+//   uploadFiles("user/cover-photo", [...allowedFormat.image], 10).array(
+//     "cover",
+//     2,
+//   ),
+//   fileValidation,
+//   controller.coverPhoto,
+// );
 router.delete(
   "/profile",
   verifyTokenMiddleware("strict"),

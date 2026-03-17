@@ -10,6 +10,7 @@ import {
   UnauthorizedException,
 } from "../../Utils/index.js";
 import { checkExistence } from "../Auth/auth.services.js";
+import { resolve } from "node:path";
 
 export const getProfile = async (userId) => {
   const user = await userRepo.findById({
@@ -67,17 +68,15 @@ export const deleteProfile = async (userId) => {
   }
   return true;
 };
-export const uploadProfilePic = async (userId, file) => {
-  const existUser = await userRepo.findById({ id: userId });
-  //delete old uploaded profile picture , only the last one remains
-  fs.unlinkSync(existUser.profilePicture);
-  const user = await userRepo.updateOne({
-    filter: { _id: userId },
-    update: { profilePicture: file.path },
-  });
-  if (!user) {
-    NotFoundException({ message: "User not found!" });
+export const uploadProfilePic = async (user, file) => {
+  if (user.profilePicture) {
+    //delete old uploaded profile picture , only the last one remains
+    const old = resolve(user.profilePicture);
+    if (fs.existsSync(old)) fs.unlinkSync(old);
   }
+
+  user.profilePicture = file.finalPath;
+  await user.save();
 
   return user;
 };
