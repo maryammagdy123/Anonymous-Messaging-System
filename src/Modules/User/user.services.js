@@ -59,7 +59,7 @@ export const changePassword = async (userId, currentPassword, newPassword) => {
     update: { password: newPassword },
   });
 
-  return result.password;
+  return result;
 };
 export const deleteProfile = async (userId) => {
   const user = await userRepo.findByIdAndDelete(userId);
@@ -74,9 +74,13 @@ export const uploadProfilePic = async (user, file) => {
     const old = resolve(user.profilePicture);
     if (fs.existsSync(old)) fs.unlinkSync(old);
   }
-
+                
   user.profilePicture = file.finalPath;
   await user.save();
 
   return user;
+};
+
+export const uploadCoverPhotos = async (user, file) => {
+
 };
