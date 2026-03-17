@@ -34,10 +34,10 @@ export const updateProfile = async (req, res, next) => {
 
 export const updatePassword = async (req, res, next) => {
   try {
-    const userId = req.user._id;
+    const user = req.user;
     let { currentPassword, newPassword } = req.body;
-    const updatedPassword = await service.changePassword(
-      userId,
+    const result = await service.changePassword(
+      user,
       currentPassword,
       newPassword,
     );
@@ -45,6 +45,10 @@ export const updatePassword = async (req, res, next) => {
       res,
       status: 200,
       message: "Password changed successfully!",
+      data: {
+        success: true,
+        result,
+      },
     });
   } catch (error) {
     next(error);
@@ -82,7 +86,7 @@ export const profilePic = async (req, res, next) => {
   }
 };
 
-export const coverPhoto = async (req,res,next) => {
+export const coverPhoto = async (req, res, next) => {
   try {
     const uploadedCover = await service.uploadCoverPhotos(req.user, req.files);
     return successResponse({

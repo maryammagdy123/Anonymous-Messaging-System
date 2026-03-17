@@ -45,17 +45,16 @@ export const updateProfile = async (userId, data) => {
   return updatedUser;
 };
 
-export const changePassword = async (userId, currentPassword, newPassword) => {
-  const user = await userRepo.findById({ id: userId });
+export const changePassword = async (user, currentPassword, newPassword) => {
   const checkPassword = await compare(currentPassword, user.password);
   if (!checkPassword) {
     InvalidCredentialsException({
-      message: "Please enter correct current password!",
+      message: "Incorrect current password!",
     });
   }
   newPassword = await hash(newPassword);
   const result = await userRepo.updateOne({
-    filter: { _id: userId },
+    filter: { _id: user._id },
     update: { password: newPassword },
   });
 
@@ -74,13 +73,11 @@ export const uploadProfilePic = async (user, file) => {
     const old = resolve(user.profilePicture);
     if (fs.existsSync(old)) fs.unlinkSync(old);
   }
-                
+
   user.profilePicture = file.finalPath;
   await user.save();
 
   return user;
 };
 
-export const uploadCoverPhotos = async (user, file) => {
-
-};
+export const uploadCoverPhotos = async (user, file) => {};
