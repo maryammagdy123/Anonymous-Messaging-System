@@ -52,14 +52,27 @@ export const anonymousMessage = async (req, res, next) => {
     const { content } = req.body;
     const { receiverId } = req.params;
     const message = await service.sendAnonymousMessage(receiverId, content);
-   
-      return successResponse({
-        res,
-        status: 201,
-        message: "Your message sent successfully !",
-        data: { message },
-      });
+
+    return successResponse({
+      res,
+      status: 201,
+      message: "Your message sent successfully !",
+      data: { message },
+    });
   } catch (error) {
     next(error);
   }
+};
+export const markAsReadMessage = async (req, res, next) => {
+  const { messageId } = req.params;
+  const user = req.user;
+  const readMessage = await service.readMessage(messageId, user);
+  return successResponse({
+    res,
+    status: 200,
+    message: "Message marked as read successfully",
+    data: {
+      message: readMessage,
+    },
+  });
 };
