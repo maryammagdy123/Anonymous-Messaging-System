@@ -19,4 +19,11 @@ router.post(
   controller.anonymousMessage,
 );
 
+//mark as read message
+router.patch(
+  "/:messageId/read",
+  verifyTokenMiddleware("strict"),
+  controller.markAsReadMessage,
+);
+
 export default router;
