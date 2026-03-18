@@ -62,7 +62,7 @@ export const sendAnonymousMessage = async (receiverId, message) => {
 //received messages(inbox)
 export const getInboxMessages = async (user) => {
   const messages = await messageRepo.find({
-    receiverId: user._id,
+    filter: { receiverId: user._id },
     populate: [
       {
         path: "senderId",
@@ -85,7 +85,7 @@ export const getInboxMessages = async (user) => {
 //sent messages
 export const getSentMessages = async (user) => {
   const messages = await messageRepo.find({
-  filter:{  senderId: user._id},
+    filter: { senderId: user._id },
     populate: [
       {
         path: "receiverId",
@@ -134,9 +134,7 @@ export const getUnreadMessages = async (receiver) => {
     },
     {
       $facet: {
-        messages: [
-          { $sort: { createdAt: -1 } }, // optional
-        ],
+        messages: [{ $sort: { createdAt: -1 } }],
         count: [{ $count: "total" }],
       },
     },
@@ -152,4 +150,3 @@ export const getUnreadMessages = async (receiver) => {
     unreadMessages: decryptedMessages,
   };
 };
-
