@@ -83,7 +83,7 @@ export const unreadMessages = async (req, res, next) => {
   return successResponse({
     res,
     status: 200,
-    message: "Message marked as read successfully",
+    message: "Unread Messages",
     data: {
       messages: unreadMessages,
       count,
