@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
 } from "../../Utils/index.js";
 import { checkExistence } from "../Auth/auth.services.js";
-import { resolve } from "node:path";
+import path, { resolve } from "node:path";
 
 export const getProfile = async (userId) => {
   const user = await userRepo.findById({
@@ -69,9 +69,25 @@ export const deleteProfile = async (userId) => {
 };
 export const uploadProfilePic = async (user, file) => {
   if (user.profilePicture) {
-    //delete old uploaded profile picture , only the last one remains
     const old = resolve(user.profilePicture);
-    if (fs.existsSync(old)) fs.unlinkSync(old);
+
+    if (fs.existsSync(old)) {
+      //file name
+      const fileName = path.basename(old);
+
+      const galleryFolder = resolve(`upload/${user._id}/gallery`);
+
+      // checks if gallery folder is exist
+      if (!fs.existsSync(galleryFolder)) {
+        fs.mkdirSync(galleryFolder, { recursive: true });
+      }
+
+      // new path for the old images files
+      const newPath = resolve(`upload/${user._id}/gallery/${fileName}`);
+
+      // move old photo into the new folder
+      fs.renameSync(old, newPath);
+    }
   }
 
   user.profilePicture = file.finalPath;
