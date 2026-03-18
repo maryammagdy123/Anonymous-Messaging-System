@@ -16,7 +16,7 @@ const getDecryptedMessage = (messages, owner) => {
     }
 
     return {
-      ...msg.toObject(),
+      ...(msg.toObject ? msg.toObject() : msg),
       content: decryptedContent,
     };
   });
@@ -85,7 +85,7 @@ export const getInboxMessages = async (user) => {
 //sent messages
 export const getSentMessages = async (user) => {
   const messages = await messageRepo.find({
-    senderId: user._id,
+  filter:{  senderId: user._id},
     populate: [
       {
         path: "receiverId",
