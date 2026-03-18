@@ -1,4 +1,4 @@
-# 📩 Secure Messaging System API
+# 📩 Anonymous Messaging System API
 
 A security-focused messaging system backend built with Node.js, Express, and MongoDB.
 
