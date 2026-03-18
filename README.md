@@ -1,4 +1,3 @@
-# Sara7a App API Documentation
 # 📩 Secure Messaging System API
 
 A security-focused messaging system backend built with Node.js, Express, and MongoDB.
@@ -40,7 +39,7 @@ The project simulates real-world messaging applications with a strong emphasis o
 ---
 
 
-
+# Sara7a App API Documentation
 
 > Base URL: `{{baseUrl}}`
 
