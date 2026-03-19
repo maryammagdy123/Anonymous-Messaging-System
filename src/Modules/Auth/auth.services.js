@@ -12,6 +12,7 @@ import {
   NotFoundException,
 } from "../../Utils/index.js";
 import { generateOTP } from "../../Utils/otp.utils.js";
+import { generateAndSendOTP } from "../OTP/otp.services.js";
 
 export const checkExistence = async (email) => {
   return await userRepo.findOne({ filter: { email } });
@@ -19,8 +20,11 @@ export const checkExistence = async (email) => {
 
 export const signup = async (userData) => {
   const { privateKey, publicKey } = generateKeyPair();
-  const otp = generateOTP();
-  const hashedOtp = await hash(otp);
+  const otp = await generateAndSendOTP(userData.email, "verify");
+  const userExist = await checkExistence(userData.email);
+  if (userExist) {
+    ConflictException({ message: "This email already in use!!" });
+  }
   const hashedPassword = await hash(userData.password);
 
   const user = await userRepo.create({
@@ -29,13 +33,10 @@ export const signup = async (userData) => {
     password: hashedPassword,
     publicKey: publicKey,
     privateKey: privateKey,
-    otp: hashedOtp,
-    otpExpires: Date.now() + 10 * 60 * 1000,
   });
 
-  await sendOTPEmail(user.email, otp,"Your Verification OTP code");
   const result = {
-    id:user._id,
+    id: user._id,
     username: user.username,
     email: user.email,
     isConfirmed: user.isConfirmed,
@@ -83,7 +84,7 @@ export const login = async (email, password) => {
   }
   if (!existUser.isConfirmed) {
     BadRequestException({ message: "Please confirm you email first!" });
-  }    
+  }
 
   const isCompare = await compare(password, existUser.password);
   if (!isCompare) {
