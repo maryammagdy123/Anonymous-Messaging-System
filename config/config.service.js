@@ -18,3 +18,6 @@ export const TOKEN_EXPIRES_IN = process.env.TOKEN_EXPIRES_IN;
 export const REFRESH_EXPIRES_IN = process.env.REFRESH_EXPIRES_IN;
 export const MAILTRAP_USER = process.env.MAILTRAP_USER;
 export const MAILTRAP_PASS = process.env.MAILTRAP_PASS;
+export const SMTP_PASSWORD_KEY = process.env.SMTP_PASSWORD_KEY;
+export const SMTP_USER = process.env.SMTP_USER;
+export const SMTP_PORT = process.env.SMTP_PORT;

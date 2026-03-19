@@ -1,15 +1,18 @@
 import nodemailer from "nodemailer";
-import { MAILTRAP_PASS, MAILTRAP_USER } from "../../config/config.service.js";
+import {
+  SMTP_PASSWORD_KEY,
+  SMTP_PORT,
+  SMTP_USER,
+} from "../../config/config.service.js";
 
-export const sendOTPEmail = async (email, otp,subject) => {
-  //mailtrap
+export const sendOTPEmail = async (email, otp, subject) => {
   const transporter = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 587,
-    secure: false,
+    host: "smtp.gmail.com",
+    port: SMTP_PORT,
+    secure: true,
     auth: {
-      user: MAILTRAP_USER,
-      pass: MAILTRAP_PASS,
+      user: SMTP_USER,
+      pass: SMTP_PASSWORD_KEY,
     },
   });
 
