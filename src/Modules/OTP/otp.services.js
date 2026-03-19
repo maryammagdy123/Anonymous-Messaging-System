@@ -1,10 +1,6 @@
 import { otpRepo, userRepo } from "../../DB/Repo/index.js";
 import { sendOTPEmail } from "../../Utils/email.utils.js";
-import {
-  BadRequestException,
-  compare,
-  hash,
-} from "../../Utils/index.js";
+import { BadRequestException, compare, hash } from "../../Utils/index.js";
 import { generateOTP } from "../../Utils/otp.utils.js";
 
 
@@ -15,7 +11,7 @@ export const generateAndSendOTP = async (email, type) => {
     email,
     otp: hashedOtp,
     otpType: type,
-    expiresAt: Date.now() + 10 * 60 * 1000,
+    expiresAt: Date.now() + 1 * 60 * 1000,
   });
   await sendOTPEmail(
     email,
@@ -24,6 +20,17 @@ export const generateAndSendOTP = async (email, type) => {
   );
   console.log(otpDoc);
   return otpDoc;
+};
+
+export const resendOTP = async (email) => {
+  const isOTPExistBefore = await otpRepo.findOne({ filter: { email } });
+  if (isOTPExistBefore) {
+    BadRequestException({
+      message: "We already sent you an otp and its still valid!",
+    });
+  }
+  const otp = await generateAndSendOTP(email, "verify");
+  return otp;
 };
 
 export const verifyOTP = async (body, type) => {
