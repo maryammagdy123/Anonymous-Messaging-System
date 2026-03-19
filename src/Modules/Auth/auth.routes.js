@@ -15,7 +15,7 @@ router.post(
 );
 router.post("/login", validation(loginSchema, "body"), controller.login);
 // router.post("login-with-google", controller.loginWithGoogle);
-router.post("/confirm-otp", controller.confirmOtp);
+// router.post("/confirm-otp", controller.confirmOtp);
 /*===========Protected routes============= */
 // router.post(
 //   "/refresh-token",
