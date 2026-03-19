@@ -6,11 +6,11 @@ const OtpSchema = new Schema(
       type: String,
       required: true,
     },
-    otp:{
-        type:String,
-        required:true
+    otp: {
+      type: String,
+      required: true,
     },
-    
+
     otpType: {
       type: String,
       enum: ["verify", "reset"],
@@ -19,6 +19,11 @@ const OtpSchema = new Schema(
     attempts: {
       type: Number,
       default: 0,
+    },
+
+    expiresAt: {
+      type: Date,
+      index: { expires: 0 },
     },
   },
   { timestamps: true },
