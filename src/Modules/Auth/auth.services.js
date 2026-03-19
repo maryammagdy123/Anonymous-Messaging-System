@@ -20,7 +20,7 @@ export const checkExistence = async (email) => {
 
 export const signup = async (userData) => {
   const { privateKey, publicKey } = generateKeyPair();
-  const otp = await generateAndSendOTP(userData.email, "verify");
+
   const userExist = await checkExistence(userData.email);
   if (userExist) {
     ConflictException({ message: "This email already in use!!" });
@@ -34,7 +34,7 @@ export const signup = async (userData) => {
     publicKey: publicKey,
     privateKey: privateKey,
   });
-
+  await generateAndSendOTP(userData.email, "verify");
   const result = {
     id: user._id,
     username: user.username,
