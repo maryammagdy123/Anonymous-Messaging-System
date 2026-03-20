@@ -2,7 +2,11 @@ import { Router } from "express";
 import * as controller from "./auth.controller.js";
 import { verifyTokenMiddleware } from "../../Middleware/auth.middleware.js";
 import { validation } from "../../Middleware/validation.middleware.js";
-import { loginSchema, registerSchema } from "./auth.validation.js";
+import {
+  confirmOtpSchema,
+  loginSchema,
+  registerSchema,
+} from "./auth.validation.js";
 import { uploadFiles } from "../../Utils/multer.utils.js";
 
 const router = Router();
@@ -15,7 +19,11 @@ router.post(
 );
 router.post("/login", validation(loginSchema, "body"), controller.login);
 // router.post("login-with-google", controller.loginWithGoogle);
-router.patch("/account/verify-account", controller.accountVerification);
+router.patch(
+  "/account/verify-account",
+  validation(confirmOtpSchema, "body"),
+  controller.accountVerification,
+);
 /*===========Protected routes============= */
 // router.post(
 //   "/refresh-token",
