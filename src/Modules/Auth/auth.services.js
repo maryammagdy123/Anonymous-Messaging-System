@@ -1,4 +1,4 @@
-import { userRepo } from "../../DB/Repo/index.js";
+import { otpRepo, userRepo } from "../../DB/Repo/index.js";
 import {
   BadRequestException,
   compare,
@@ -10,19 +10,26 @@ import {
   NotFoundException,
 } from "../../Utils/index.js";
 
-import { generateAndSendOTP } from "../OTP/otp.services.js";
+import { generateAndSendOTP, verifyOTP } from "../OTP/otp.services.js";
 
 export const checkExistence = async (email) => {
   return await userRepo.findOne({ filter: { email } });
 };
 
 export const signup = async (userData) => {
-  const { privateKey, publicKey } = generateKeyPair();
-
   const userExist = await checkExistence(userData.email);
-  if (userExist) {
-    ConflictException({ message: "This email already in use!!" });
+  if (userExist && userExist.isConfirmed) {
+    ConflictException({
+      message: "This email is already verified, please login instead!",
+    });
   }
+
+  if (userExist && userExist.isConfirmed === false) {
+    ConflictException({
+      message: "This email is already in use!",
+    });
+  }
+  const { privateKey, publicKey } = generateKeyPair();
   const hashedPassword = await hash(userData.password);
 
   const user = await userRepo.create({
@@ -32,11 +39,8 @@ export const signup = async (userData) => {
     publicKey: publicKey,
     privateKey: privateKey,
   });
-  await generateAndSendOTP(
-    userData.email,
-    "verify",
 
-  );
+  await generateAndSendOTP(userData.email, "verify");
   const result = {
     id: user._id,
     username: user.username,
@@ -104,4 +108,24 @@ export const refreshToken = async (userId) => {
   }
   const accessToken = generateToken({ id: user._id });
   return accessToken;
+};
+export const verifyAccount = async (email, otp, type) => {
+  //check email existence
+  const userExist = await checkExistence(email);
+  if (!userExist) {
+    NotFoundException({
+      message: "No such account found please create account first!",
+    });
+  }
+
+  //verify otp
+  await verifyOTP(email, otp, type);
+  const updatedUser = await userRepo.updateOne({
+    filter: { email },
+    update: { isConfirmed: true },
+  });
+  if (updatedUser) {
+    await otpRepo.deleteOne({ email });
+  }
+  return updatedUser;
 };

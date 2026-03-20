@@ -15,7 +15,7 @@ router.post(
 );
 router.post("/login", validation(loginSchema, "body"), controller.login);
 // router.post("login-with-google", controller.loginWithGoogle);
-// router.post("/confirm-otp", controller.confirmOtp);
+router.patch("/account/verify-account", controller.accountVerification);
 /*===========Protected routes============= */
 // router.post(
 //   "/refresh-token",

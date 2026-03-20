@@ -37,6 +37,10 @@ export const generateAndSendOTP = async (email, type) => {
 };
 
 export const resendOTP = async (email, type) => {
+  const user = await checkExistence(email);
+  if (user.isConfirmed) {
+    throw new Error("cannot send otp!");
+  }
   const isOTPExistBefore = await otpRepo.findOne({ filter: { email } });
   if (isOTPExistBefore) {
     BadRequestException({
@@ -47,28 +51,22 @@ export const resendOTP = async (email, type) => {
   return otp;
 };
 
-export const verifyOTP = async (body, type) => {
-  const userExist = await checkExistence(body.email);
-  if (!userExist) {
-    NotFoundException({
-      message: "No such account found please create account first!",
-    });
-  }
+export const verifyOTP = async (email, otp, type) => {
   //check if user has an otp
   const otpDoc = await otpRepo.findOne({
-    filter: { email: body.email, otpType: type },
+    filter: { email, otpType: type },
   });
 
   if (!otpDoc) {
     BadRequestException({ message: "OTP has expired" });
   }
-  const isCompare = await compare(body.otp, otpDoc.otp);
+  const isCompare = await compare(otp, otpDoc.otp);
 
   //check if the otp entered by user matches the one in the db
   if (!isCompare) {
     otpDoc.attempts += 1;
     if (otpDoc.attempts > 3) {
-      await otpRepo.deleteOne({ email: body.email });
+      await otpRepo.deleteOne({ email, otpType: type });
       BadRequestException({
         message:
           "Oops! You've reached the maximum number of attempts. Please request a new OTP",
@@ -78,12 +76,5 @@ export const verifyOTP = async (body, type) => {
     BadRequestException({ message: "Invalid OTP" });
   }
 
-  const updatedUser = await userRepo.updateOne({
-    filter: { email: body.email },
-    update: { isConfirmed: true },
-  });
-  if (updatedUser) {
-    await otpRepo.deleteOne({ email: body.email });
-  }
-  return updatedUser;
+  return true;
 };
