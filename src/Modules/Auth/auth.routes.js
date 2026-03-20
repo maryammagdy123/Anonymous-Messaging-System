@@ -24,6 +24,11 @@ router.patch(
   validation(confirmOtpSchema, "body"),
   controller.accountVerification,
 );
+router.patch(
+  "/reset-password",
+  validation(passwordSchema, "body"),
+  controller.resetPassword,
+);
 /*===========Protected routes============= */
 // router.post(
 //   "/refresh-token",
