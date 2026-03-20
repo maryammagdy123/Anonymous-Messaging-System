@@ -9,7 +9,7 @@ import {
 import { generateOTP } from "../../Utils/otp.utils.js";
 import { checkExistence } from "../Auth/auth.services.js";
 
-export const generateAndSendOTP = async (email, type) => {
+export const generateAndSendOTP = async (email, type, subject) => {
   const userExist = await checkExistence(email);
   if (!userExist) {
     NotFoundException({ message: "User Not found Cannot send OTP ...!" });
@@ -22,11 +22,7 @@ export const generateAndSendOTP = async (email, type) => {
     otpType: type,
     expiresAt: Date.now() + 5 * 60 * 1000,
   });
-  await sendOTPEmail(
-    email,
-    otp,
-    "Your Account OTP  verification code , note that otp will expire in 10 minutes",
-  );
+  await sendOTPEmail(email, otp, subject);
   console.log(otpDoc);
   return otpDoc;
 };

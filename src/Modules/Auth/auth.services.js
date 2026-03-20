@@ -34,7 +34,11 @@ export const signup = async (userData) => {
     publicKey: publicKey,
     privateKey: privateKey,
   });
-  await generateAndSendOTP(userData.email, "verify");
+  await generateAndSendOTP(
+    userData.email,
+    "verify",
+    "Account Verification OTP Code",
+  );
   const result = {
     id: user._id,
     username: user.username,

@@ -5,7 +5,7 @@ import {
   SMTP_USER,
 } from "../../config/config.service.js";
 
-export const sendOTPEmail = async (email, otp, subject) => {
+export const sendOTPEmail = async (email, otp, subject = "OTP code") => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: SMTP_PORT,
