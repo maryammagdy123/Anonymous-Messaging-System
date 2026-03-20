@@ -1,7 +1,5 @@
 import { userRepo } from "../../DB/Repo/index.js";
-import { sendOTPEmail } from "../../Utils/email.utils.js";
 import {
-  AlreadyConfirmed,
   BadRequestException,
   compare,
   ConflictException,
@@ -11,7 +9,7 @@ import {
   InvalidCredentialsException,
   NotFoundException,
 } from "../../Utils/index.js";
-import { generateOTP } from "../../Utils/otp.utils.js";
+
 import { generateAndSendOTP } from "../OTP/otp.services.js";
 
 export const checkExistence = async (email) => {
@@ -37,7 +35,7 @@ export const signup = async (userData) => {
   await generateAndSendOTP(
     userData.email,
     "verify",
-    "Account Verification OTP Code",
+
   );
   const result = {
     id: user._id,
