@@ -8,8 +8,17 @@ import {
 } from "../../Utils/index.js";
 import { generateOTP } from "../../Utils/otp.utils.js";
 import { checkExistence } from "../Auth/auth.services.js";
-
-export const generateAndSendOTP = async (email, type, subject) => {
+export const getSubjectByType = (type) => {
+  switch (type) {
+    case "verify":
+      return "Verify Your Account";
+    case "reset_password":
+      return "Reset Your Password";
+    default:
+      return "Your OTP Code";
+  }
+};
+export const generateAndSendOTP = async (email, type) => {
   const userExist = await checkExistence(email);
   if (!userExist) {
     NotFoundException({ message: "User Not found Cannot send OTP ...!" });
@@ -22,7 +31,7 @@ export const generateAndSendOTP = async (email, type, subject) => {
     otpType: type,
     expiresAt: Date.now() + 5 * 60 * 1000,
   });
-  await sendOTPEmail(email, otp, subject);
+  await sendOTPEmail(email, otp, getSubjectByType(type));
   console.log(otpDoc);
   return otpDoc;
 };
