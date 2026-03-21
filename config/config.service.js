@@ -21,3 +21,6 @@ export const MAILTRAP_PASS = process.env.MAILTRAP_PASS;
 export const SMTP_PASSWORD_KEY = process.env.SMTP_PASSWORD_KEY;
 export const SMTP_USER = process.env.SMTP_USER;
 export const SMTP_PORT = process.env.SMTP_PORT;
+export const CLOUD_NAME = process.env.CLOUD_NAME;
+export const CLOUD_API_KEY = process.env.CLOUD_API_KEY;
+export const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET;

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import multer, { diskStorage } from "multer";
-import { BadRequestException } from "./Response/error.response.js";
+import { BadRequestException } from "../Response/error.response.js";
 import { resolve } from "node:path";
 export const allowedFormat = {
   image: ["image/png", "image/jpg", "image/jpeg", "image/gif"],
