@@ -15,12 +15,12 @@ export const profile = async (req, res, next) => {
 };
 export const updateProfile = async (req, res, next) => {
   try {
-    const userId = req.user._id;
+    const user = req.user;
     if (req.body.password) {
       delete req.body.password;
     }
     console.log(req.body);
-    const profile = await service.updateProfile(userId, req.body);
+    const profile = await service.updateProfile(user, req.body);
     return successResponse({
       res,
       status: 200,
