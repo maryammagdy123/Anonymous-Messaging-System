@@ -69,6 +69,20 @@ export const deleteProfile = async (req, res, next) => {
   }
 };
 
+export const deleteProfilePicture = async (req, res, next) => {
+  try {
+    const user = req.user;
+   const result= await service.removeProfilePic(user);
+    return successResponse({
+      res,
+      status: 200,
+      message: "Profile Picture removed successfully!",
+      data: { result },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const profilePic = async (req, res, next) => {
   try {
     const updatedUser = await service.uploadProfilePic(req.user, req.file);

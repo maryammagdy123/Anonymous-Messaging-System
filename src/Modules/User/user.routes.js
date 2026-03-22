@@ -59,5 +59,10 @@ router.delete(
   verifyTokenMiddleware("strict"),
   controller.deleteProfile,
 );
+router.delete(
+  "/profile/profile-picture",
+  verifyTokenMiddleware("strict"),
+  controller.deleteProfilePicture,
+);
 
 export default router;

@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs, { existsSync, unlinkSync } from "node:fs";
 import { userRepo } from "../../DB/Repo/index.js";
 import {
   BadRequestException,
@@ -16,7 +16,7 @@ import path, { resolve } from "node:path";
 export const getProfile = async (userId) => {
   const user = await userRepo.findById({
     id: userId,
-    projection: { username: 1, email: 1, password: 1 },
+    projection: { username: 1, email: 1, password: 1, profilePicture: 1 },
   });
   if (!user) {
     NotFoundException({ message: "User Not Found!" });
@@ -62,7 +62,7 @@ export const changePassword = async (user, currentPassword, newPassword) => {
 };
 export const deleteProfile = async (userId) => {
   const user = await userRepo.findByIdAndDelete(userId);
-  if (!user && user._id.toString() !== userId) {
+  if (!user && user._id.toString() !== userId.toString()) {
     return UnauthorizedException({ message: "You are not authorized" });
   }
   return true;
@@ -95,7 +95,16 @@ export const uploadProfilePic = async (user, file) => {
 
   return user;
 };
-
+export const removeProfilePic = async (user) => {
+  if (!user.profilePicture) {
+    BadRequestException({ message: "No photo found to delete" });
+  }
+  const imagePath = resolve(user.profilePicture);
+  if (existsSync(imagePath)) unlinkSync(imagePath);
+  // if (user.profilePicture) user.profilePicture = undefined;
+  // await user.save();
+  return imagePath;
+};
 export const uploadCoverPhotos = async (user, file) => {
   //check images count , if already 2 replace new one with the oldest one
   if (user.coverPhotos.length >= 2) {
