@@ -24,3 +24,4 @@ export const SMTP_PORT = process.env.SMTP_PORT;
 export const CLOUD_NAME = process.env.CLOUD_NAME;
 export const CLOUD_API_KEY = process.env.CLOUD_API_KEY;
 export const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET;
+export const APP_NAME = process.env.APP_NAME;

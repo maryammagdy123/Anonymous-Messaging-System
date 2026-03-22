@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import {
+  APP_NAME,
   CLOUD_API_KEY,
   CLOUD_API_SECRET,
   CLOUD_NAME,
@@ -10,3 +11,13 @@ cloudinary.config({
   api_key: CLOUD_API_KEY,
   api_secret: CLOUD_API_SECRET,
 });
+
+export const uploadFile = async ({ file, folder }) => {
+  return await cloudinary.uploader.upload(file.path, {
+    folder: `${APP_NAME}/${folder}`,
+  });
+};
+export const destroyFile = async (public_id) => {
+  return await cloudinary.uploader.destroy(public_id);
+};
+export default cloudinary;
