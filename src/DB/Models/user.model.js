@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { RoleEnum } from "../../Utils/Enums/user.enums.js";
+import { ProviderEnum, RoleEnum } from "../../Utils/Enums/user.enums.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,7 +19,9 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true,
+      required: function () {
+        return this.provider === ProviderEnum.System; // returns required=true if provider=System
+      },
     },
 
     isConfirmed: {
@@ -51,6 +53,11 @@ const userSchema = new mongoose.Schema(
     profileVisits: {
       type: Number,
       default: 0,
+    },
+    provider: {
+      type: String,
+      enum: Object.values(ProviderEnum),
+      default: ProviderEnum.System,
     },
   },
   { timestamps: true },
