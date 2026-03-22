@@ -10,7 +10,6 @@ import {
 } from "./auth.validation.js";
 import { uploadFiles } from "../../Utils/Multer/local.multer.utils.js";
 
-
 const router = Router();
 //public routes
 router.post(
@@ -34,9 +33,5 @@ router.patch(
 //   controller.resetNewPassword,
 // );
 /*===========Protected routes============= */
-// router.post(
-//   "/refresh-token",
-//   verifyTokenMiddleware("strict"),
-//   controller.refreshToken,
-// );
+router.get("/refresh-token", controller.refreshToken);
 export default router;

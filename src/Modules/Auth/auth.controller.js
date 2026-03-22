@@ -57,16 +57,14 @@ export const login = async (req, res, next) => {
 // };
 export const refreshToken = async (req, res, next) => {
   try {
-    //retrieve decoded token (having users id)
-    const userId = req.user._id; //=>> gaya mn el verify => decoded=>>comes from auth middleware
-    //calling services
-    const accessToken = service.refreshToken(userId);
+    const accessToken = await service.refreshToken(req.headers.authorization);
+    console.log(accessToken);
     return successResponse({
       res,
       status: 201,
       message: "Token refreshed successfully!",
       data: {
-        refreshToken: accessToken,
+        token: accessToken,
       },
     });
   } catch (error) {

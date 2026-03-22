@@ -1,3 +1,4 @@
+import { REFRESH_TOKEN_SECRET_KEY } from "../../../config/config.service.js";
 import { otpRepo, userRepo } from "../../DB/Repo/index.js";
 import {
   BadRequestException,
@@ -8,6 +9,7 @@ import {
   hash,
   InvalidCredentialsException,
   NotFoundException,
+  verifyToken,
 } from "../../Utils/index.js";
 
 import { generateAndSendOTP, verifyOTP } from "../OTP/otp.services.js";
@@ -101,8 +103,9 @@ export const login = async (email, password) => {
 };
 
 export const loginWithGoogle = async () => {};
-export const refreshToken = async (userId) => {
-  const user = await userRepo.findById({ id: userId });
+export const refreshToken = async (authorization) => {
+  const decoded = verifyToken(authorization, REFRESH_TOKEN_SECRET_KEY);
+  const user = await userRepo.findById({ id: decoded.id });
   if (!user) {
     NotFoundException({ message: "User Not Found!" });
   }
@@ -125,7 +128,7 @@ export const verifyAccount = async (email, otp, type) => {
     update: { isConfirmed: true },
   });
   if (updatedUser) {
-    await otpRepo.deleteOne({ email,otpType:type });
+    await otpRepo.deleteOne({ email, otpType: type });
   }
   return updatedUser;
 };
