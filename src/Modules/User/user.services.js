@@ -12,8 +12,24 @@ import {
 } from "../../Utils/index.js";
 import { checkExistence } from "../Auth/auth.services.js";
 import path, { resolve } from "node:path";
+import mongoose from "mongoose";
+import { RoleEnum } from "../../Utils/Enums/user.enums.js";
 
-export const getProfile = async (userId) => {
+export const getUserWithNoSensitiveData = (user) => {
+  const userObj = user.toObject();
+
+  delete userObj.password;
+  delete userObj.otp;
+  delete userObj.__v;
+  delete userObj.role;
+  delete userObj.privateKey;
+  delete userObj.publicKey;
+  delete userObj.profileVisits;
+  delete userObj.provider;
+
+  return userObj;
+};
+export const getMyProfile = async (userId) => {
   const user = await userRepo.findById({
     id: userId,
     projection: { username: 1, email: 1, password: 1, profilePicture: 1 },
@@ -113,4 +129,21 @@ export const uploadCoverPhotos = async (user, file) => {
   user.coverPhotos.push(file.finalPath);
   user.save();
   return file;
+};
+export const getUserProfile = async (userId) => {
+  let safeUser;
+  const user = await userRepo.findById({
+    id: userId,
+    // projection: "-password -otp -__v -publicKey -privateKey",
+  });
+  console.log(user);
+  if (!user) {
+    NotFoundException({
+      message: "User Not found!",
+    });
+  }
+  if (user?._id !== userId) user.profileVisits += 1;
+  await user.save();
+
+  return (safeUser = getUserWithNoSensitiveData(user));
 };

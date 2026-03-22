@@ -3,7 +3,7 @@ import * as service from "./user.services.js";
 export const profile = async (req, res, next) => {
   try {
     let userId = req.user._id;
-    const profile = await service.getProfile(userId);
+    const profile = await service.getMyProfile(userId);
     return successResponse({
       res,
       message: "profile fetched successfully!",
@@ -72,7 +72,7 @@ export const deleteProfile = async (req, res, next) => {
 export const deleteProfilePicture = async (req, res, next) => {
   try {
     const user = req.user;
-   const result= await service.removeProfilePic(user);
+    const result = await service.removeProfilePic(user);
     return successResponse({
       res,
       status: 200,
@@ -110,6 +110,22 @@ export const coverPhoto = async (req, res, next) => {
       data: {
         success: true,
         cover: uploadedCover,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const visitUser = async (req, res, next) => {
+  try {
+    const {userId} = req.params;
+    const visitedUser = await service.getUserProfile(userId);
+    return successResponse({
+      res,
+      status: 200,
+      message: "done",
+      data: {
+        visitedUser,
       },
     });
   } catch (error) {

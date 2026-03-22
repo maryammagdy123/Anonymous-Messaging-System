@@ -15,7 +15,11 @@ import {
 
 const router = Router();
 
-router.get("/profile", verifyTokenMiddleware("strict"), controller.profile);
+router.get(
+  "/profile/my-profile",
+  verifyTokenMiddleware("strict"),
+  controller.profile,
+);
 router.patch(
   "/profile",
   verifyTokenMiddleware("strict"),
@@ -64,5 +68,9 @@ router.delete(
   verifyTokenMiddleware("strict"),
   controller.deleteProfilePicture,
 );
-
+router.get(
+  "/profile/:userId",
+  verifyTokenMiddleware("optional"),
+  controller.visitUser,
+);
 export default router;
