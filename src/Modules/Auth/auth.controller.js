@@ -58,7 +58,7 @@ export const login = async (req, res, next) => {
 export const refreshToken = async (req, res, next) => {
   try {
     const accessToken = await service.refreshToken(req.headers.authorization);
-    console.log(accessToken);
+    // console.log(accessToken);
     return successResponse({
       res,
       status: 201,
