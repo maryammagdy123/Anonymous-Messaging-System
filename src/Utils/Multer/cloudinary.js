@@ -34,4 +34,8 @@ export const uploadFiles = async ({ files, folder }) => {
 export const destroyFile = async (public_id) => {
   return await cloudinary.uploader.destroy(public_id);
 };
+
+export const destroyFiles = async (public_id) => {
+  return await cloudinary.api.delete_resources(public_id);
+};
 export default cloudinary;
