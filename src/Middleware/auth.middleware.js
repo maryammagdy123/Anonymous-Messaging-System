@@ -1,7 +1,7 @@
 import { userRepo } from "../DB/Repo/index.js";
 import { verifyToken } from "../Utils/index.js";
 
-export const verifyTokenMiddleware = (mode = "strict") => {
+export const verifyTokenMiddleware = (mode = "strict", roles = []) => {
   return async (req, res, next) => {
     try {
       const authHeader = req.headers.authorization;
@@ -21,6 +21,14 @@ export const verifyTokenMiddleware = (mode = "strict") => {
       req.user = user;
       //req.user.id
 
+      // ✅ check roles
+      if (roles.length > 0) {
+        if (!roles.includes(user.role)) {
+          return res.status(403).json({
+            message: "Forbidden: not authorized",
+          });
+        }
+      }
       next();
     } catch (error) {
       return res.status(401).json({ message: "Invalid token" });
