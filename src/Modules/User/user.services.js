@@ -143,7 +143,7 @@ export const getUserProfile = async (userId) => {
       message: "User Not found!",
     });
   }
-  if (user?._id !== userId) user.profileVisits += 1;
+  if (user?._id.toString()  !== userId.toString() ) user.profileVisits += 1;
   await user.save();
 
   return (safeUser = getUserWithNoSensitiveData(user));
