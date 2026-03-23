@@ -26,6 +26,7 @@ export const getUserWithNoSensitiveData = (user) => {
   delete userObj.publicKey;
   delete userObj.profileVisits;
   delete userObj.provider;
+  delete userObj.isConfirmed;
 
   return userObj;
 };
