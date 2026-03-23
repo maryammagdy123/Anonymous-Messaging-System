@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     role: {
-      type: String,
+      type: Number,
       enum: Object.values(RoleEnum),
       default: RoleEnum.User,
     },
