@@ -1,13 +1,13 @@
 //builds server and connects to database
 import express from "express";
 import { PORT } from "../config/config.service.js";
-import { authenticationDB } from "./DB/index.js";
+import { authenticationDB, redisConnection } from "./DB/index.js";
 import { NotFoundException } from "./Utils/index.js";
 import {
   authRouter,
   messageRouter,
   userRouter,
-  otpRouter
+  otpRouter,
 } from "./Modules/index.js";
 import { globalErrorHandling } from "./Middleware/error.middleware.js";
 
@@ -15,6 +15,7 @@ const bootstrap = async () => {
   const app = express();
   app.use(express.json());
   await authenticationDB();
+  await redisConnection();
 
   app.get("/", async (req, res) => {
     res.json("Assignment-9!");

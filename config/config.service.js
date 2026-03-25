@@ -32,3 +32,5 @@ export const CLOUD_NAME = process.env.CLOUD_NAME;
 export const CLOUD_API_KEY = process.env.CLOUD_API_KEY;
 export const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET;
 export const APP_NAME = process.env.APP_NAME;
+
+export const REDIS_URL = process.env.REDIS_URL;
