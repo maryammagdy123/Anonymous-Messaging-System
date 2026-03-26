@@ -1,4 +1,7 @@
-import { REFRESH_TOKEN_SECRET_KEY } from "../../../config/config.service.js";
+import {
+  REFRESH_EXPIRES_IN,
+  REFRESH_TOKEN_SECRET_KEY,
+} from "../../../config/config.service.js";
 import { redisClient } from "../../DB/index.js";
 import { otpRepo, userRepo } from "../../DB/Repo/index.js";
 import {
@@ -99,18 +102,44 @@ export const signup = async (userData) => {
 
 export const login = async (email, password) => {
   let existUser = await userRepo.findOne({ filter: { email } });
+  const accessToken = generateToken({ id: existUser._id });
+  const refreshToken = generateToken(
+    { id: existUser._id },
+    REFRESH_TOKEN_SECRET_KEY,
+    REFRESH_EXPIRES_IN,
+  );
   if (!existUser) {
-    NotFoundException({ message: "pLEASE VERIFY YOU ACCOUNT FIRST!" });
+    NotFoundException({ message: "PLEASE VERIFY YOU ACCOUNT FIRST!" });
   }
 
   const isCompare = await compare(password, existUser.password);
   if (!isCompare) {
     InvalidCredentialsException({ message: "Email or password is invalid!" });
   }
-
-  return existUser;
+  if (existUser.twoFAisEnabled === true) {
+    await generateAndSendOTP(email, "2FA");
+    return "You have received a 2 factor authentication code on your email !";
+  }
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
-
+export const verify2FA = async (body) => {
+  let { otp, email } = body;
+  const user = await checkExistence(email);
+ await  verifyOTP(otp, "2FA", email);
+  const accessToken = generateToken({ id: user._id });
+  const refreshToken = generateToken(
+    { id: user._id },
+    REFRESH_TOKEN_SECRET_KEY,
+    REFRESH_EXPIRES_IN,
+  );
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
 export const loginWithGoogle = async () => {};
 export const refreshToken = async (authorization) => {
   const decoded = verifyToken(authorization, REFRESH_TOKEN_SECRET_KEY);

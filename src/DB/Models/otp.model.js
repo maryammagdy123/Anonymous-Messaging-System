@@ -13,7 +13,7 @@ const OtpSchema = new Schema(
 
     otpType: {
       type: String,
-      enum: ["verify", "reset"],
+      enum: ["verify", "reset","2FA"],
       required: true,
     },
     attempts: {

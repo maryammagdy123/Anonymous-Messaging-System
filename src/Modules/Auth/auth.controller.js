@@ -1,8 +1,4 @@
 import {
-  REFRESH_EXPIRES_IN,
-  REFRESH_TOKEN_SECRET_KEY,
-} from "../../../config/config.service.js";
-import {
   ConflictException,
   generateToken,
   successResponse,
@@ -31,24 +27,42 @@ export const login = async (req, res, next) => {
   try {
     let { email, password } = req.body;
 
-    const user = await service.login(email, password);
-    const accessToken = generateToken({ id: user._id });
-    const refreshToken = generateToken(
-      { id: user._id },
-      REFRESH_TOKEN_SECRET_KEY,
-      REFRESH_EXPIRES_IN,
-    );
+    const result = await service.login(email, password);
+    // const accessToken = generateToken({ id: user._id });
+    // const refreshToken = generateToken(
+    //   { id: user._id },
+    //   REFRESH_TOKEN_SECRET_KEY,
+    //   REFRESH_EXPIRES_IN,
+    // );
 
     return successResponse({
       res,
       status: 200,
-      message: "User Logged in successfully",
-      data: { token: accessToken, refreshToken },
+      message: "Done",
+      data: {
+        result,
+      },
     });
   } catch (error) {
     next(error);
   }
 };
+export const verify2FA = async (req, res, next) => {
+  try {
+    const result = await service.verify2FA(req.body);
+    return successResponse({
+      res,
+      status: 200,
+      message: "Login successfully!",
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    next(error)
+  }
+};
+
 // export const loginWithGoogle = async (req, res, next) => {
 //   try {
 //   } catch (error) {
@@ -115,24 +129,3 @@ export const confirmResetPassOTP = async (req, res, next) => {
     next(error);
   }
 };
-
-// export const resetNewPassword = async (req, res, next) => {
-//   try {
-//     const { password, confirmPassword, email } = req.body;
-//     const result = await service.resetPassword(
-//       password,
-//       confirmPassword,
-//       email,
-//     );
-//     return successResponse({
-//       res,
-//       status: 200,
-//       message: "Your password changed successfully!",
-//       data: {
-//         result: result.acknowledged,
-//       },
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };

@@ -14,6 +14,8 @@ export const getSubjectByType = (type) => {
       return "Verify Your Account";
     case "reset":
       return "Reset Your Password";
+    case "2FA":
+      return "2 Factor Authentication";
     default:
       return "Your OTP Code";
   }
