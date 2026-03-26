@@ -84,27 +84,38 @@ export const deleteProfile = async (userId) => {
   }
   return true;
 };
+// export const uploadProfilePic = async (user, file) => {
+//   if (user.profilePicture) {
+//     const old = resolve(user.profilePicture);
+
+//     if (fs.existsSync(old)) {
+//       //file name
+//       const fileName = path.basename(old);
+
+//       const galleryFolder = resolve(`upload/${user._id}/gallery`);
+
+//       // checks if gallery folder is exist
+//       if (!fs.existsSync(galleryFolder)) {
+//         fs.mkdirSync(galleryFolder, { recursive: true });
+//       }
+
+//       // new path for the old images files
+//       const newPath = resolve(`upload/${user._id}/gallery/${fileName}`);
+
+//       // move old photo into the new folder
+//       fs.renameSync(old, newPath);
+//     }
+//   }
+
+//   user.profilePicture = file.finalPath;
+//   await user.save();
+
+//   return user;
+// };
 export const uploadProfilePic = async (user, file) => {
   if (user.profilePicture) {
     const old = resolve(user.profilePicture);
-
-    if (fs.existsSync(old)) {
-      //file name
-      const fileName = path.basename(old);
-
-      const galleryFolder = resolve(`upload/${user._id}/gallery`);
-
-      // checks if gallery folder is exist
-      if (!fs.existsSync(galleryFolder)) {
-        fs.mkdirSync(galleryFolder, { recursive: true });
-      }
-
-      // new path for the old images files
-      const newPath = resolve(`upload/${user._id}/gallery/${fileName}`);
-
-      // move old photo into the new folder
-      fs.renameSync(old, newPath);
-    }
+    user.gallery.push(old);
   }
 
   user.profilePicture = file.finalPath;

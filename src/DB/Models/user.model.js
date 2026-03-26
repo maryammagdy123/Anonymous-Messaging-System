@@ -50,6 +50,11 @@ const userSchema = new mongoose.Schema(
       type: [String],
       required: false,
     },
+    gallery:{
+      type:[String],
+      required:false
+    },
+    
     profileVisits: {
       type: Number,
       default: 0,
