@@ -136,14 +136,29 @@ export const getVisitCount = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const result = await service.visitCount(userId);
-     return successResponse({
+    return successResponse({
       res,
       status: 200,
       message: "done",
       data: {
-       result,
+        result,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+export const enable2FA = async (req, res, next) => {
+  const result = await service.enable2FA(req.user);
+  return successResponse({
+    res,
+    status: 200,
+    message: "2 factor authentication is enabled now",
+    data: {
+      result,
+    },
+  });
+  try {
   } catch (error) {
     next(error);
   }

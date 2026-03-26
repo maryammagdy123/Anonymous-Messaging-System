@@ -44,7 +44,11 @@ export const getMyProfile = async (userId) => {
   }
   return user;
 };
-
+export const enable2FA = async (user) => {
+  user.twoFAisEnabled = true;
+  await user.save();
+  return true;
+};
 export const updateProfile = async (user, data) => {
   if (data.email) {
     const alreadyExist = await checkExistence(data.email);

@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema(
       type:[String],
       required:false
     },
-    
+
     profileVisits: {
       type: Number,
       default: 0,
@@ -64,6 +64,10 @@ const userSchema = new mongoose.Schema(
       enum: Object.values(ProviderEnum),
       default: ProviderEnum.System,
     },
+   twoFAisEnabled:{
+    type:Boolean,
+    default:false
+   }
   },
   { timestamps: true },
 );

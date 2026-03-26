@@ -22,6 +22,11 @@ router.get(
   controller.profile,
 );
 router.patch(
+  "/enable-2FactorAuthentication",
+  verifyTokenMiddleware("strict"),
+  controller.enable2FA,
+);
+router.patch(
   "/profile",
   verifyTokenMiddleware("strict"),
   validation(updateProfileSchema),
