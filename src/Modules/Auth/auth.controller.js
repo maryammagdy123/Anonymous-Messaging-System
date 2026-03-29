@@ -154,3 +154,33 @@ export const confirmResetPassOTP = async (req, res, next) => {
     next(error);
   }
 };
+export const forgotPasswordLink = async (req, res, next) => {
+  try {
+    const result = await service.forgotPassword(req.body);
+    return successResponse({
+      res,
+      status: 200,
+      message: "If this email exists, a reset link has been sent",
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const resetPasswordWithToken = async (req, res, next) => {
+  try {
+    const result = await service.resetPassword(req.body);
+    return successResponse({
+      res,
+      status: 200,
+      message: "Password reset successfully",
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

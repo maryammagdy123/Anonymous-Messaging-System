@@ -62,3 +62,7 @@ export const decryptMessage = (encryptedBuffer, privateKey) => {
 export const hashOtp = (otp) => {
   crypto.createHash("sha256").update(otp).digest("hex");
 };
+export const generateOneTimeToken = () => {
+  let token = crypto.randomBytes(32).toString("hex");
+  return token;
+};

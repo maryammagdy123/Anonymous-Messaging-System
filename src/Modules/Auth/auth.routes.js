@@ -28,13 +28,12 @@ router.patch(
   validation(confirmOtpSchema, "body"),
   controller.accountVerification,
 );
+//resetting password using otp
 router.post("/forgot-password/send-otp", controller.sendForgotPasswordOTP);
 router.patch("/reset-password/confirm-otp", controller.confirmResetPassOTP);
-// router.patch(
-//   "/reset-password",
-//   validation(resetNewPassword, "body"),
-//   controller.resetNewPassword,
-// );
+//resetting password using one time access links
+router.post("/forgot-password", controller.forgotPasswordLink);
+router.patch("/reset-password", controller.resetPasswordWithToken);
 /*===========Protected routes============= */
 router.get("/refresh-token", controller.refreshToken);
 export default router;

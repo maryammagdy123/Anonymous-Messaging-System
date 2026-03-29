@@ -10,6 +10,7 @@ import {
   compare,
   ConflictException,
   generateKeyPair,
+  generateOneTimeToken,
   generateToken,
   hash,
   InvalidCredentialsException,
@@ -20,6 +21,7 @@ import { OAuth2Client } from "google-auth-library";
 import { generateAndSendOTP, verifyOTP } from "../OTP/otp.services.js";
 import { getUserWithNoSensitiveData } from "../User/user.services.js";
 import { ProviderEnum, RoleEnum } from "../../Utils/Enums/user.enums.js";
+import { sendOTPEmail } from "../../Utils/email.utils.js";
 
 export const checkExistence = async (email) => {
   return await userRepo.findOne({ filter: { email } });
@@ -29,16 +31,22 @@ export const checkKeyExistence = async (key) => {
 };
 const getFromCache = async (key) => {
   const cached = await redisClient.get(key);
-  if (cached) return JSON.parse(cached);
-  return null;
-  //returns key value or null
+  if (!cached) return null;
+  try {
+    return JSON.parse(cached);
+  } catch {
+    return cached; // Return raw string (e.g., bcrypt hash)
+  }
+  // Returns parsed object or raw string
 };
 const saveInCache = async (key, value, ex = 1 * 24 * 60 * 60) => {
-  value = JSON.stringify(value);
-  return redisClient.set(key, value, {
+  let formattedValue = value;
+  if (value && typeof value === "object") {
+    formattedValue = JSON.stringify(value);
+  } // else raw string/number etc.
+  return redisClient.set(key, formattedValue, {
     EX: ex,
   });
-  //returns" ok" if success
 };
 //SIGNUP AND SAVING USERS INTO REDIS CACHE UNTIL THEY VERIFY THEIR ACCOUNTS THEN SAVING THEM INTO DB
 export const signup = async (userData) => {
@@ -329,4 +337,72 @@ export const confirmForgotPasswordOTP = async (body) => {
   user.password = hashedPassword;
   await user.save();
   await otpRepo.deleteOne({ email, otpType: "reset" });
+};
+
+//forgot password with link
+export const forgotPassword = async (body) => {
+  let { email } = body;
+  //check if a user exist with this email
+  const user = await userRepo.findOne({ filter: { email } });
+  if (!user) {
+    NotFoundException({
+      message: "Seems like that you don't have account with this email!!",
+    });
+  }
+  if (!user.provider === ProviderEnum.System) {
+    BadRequestException({ message: "Cannot send!" });
+  }
+  //generate one time access link with token
+  let token = generateOneTimeToken();
+  console.log(typeof token);
+  let hashedToken = await hash(token);
+  //check if there is an old token for this user and return it if its still valid
+  const oldToken = await checkKeyExistence(`USER:RESETPASSWORD:TOKEN:${email}`);
+  if (oldToken === 1) {
+    BadRequestException({
+      message:
+        "We already sent you a reset password link, please check your email!",
+    });
+  }
+  await saveInCache(`USER:RESETPASSWORD:TOKEN:${email}`, hashedToken, 300);
+  //send one time access link
+  let resetLinkWithToken = `http://localhost:3000/reset-password?token=${token}`;
+
+  await sendOTPEmail(
+    email,
+    token,
+    "Reset your password",
+    `Click ${resetLinkWithToken} to reset password`,
+  );
+  return true;
+};
+
+export const resetPassword = async (body) => {
+  let { email, token, password } = body;
+  const user = await userRepo.findOne({ filter: { email } });
+  if (!user) {
+    NotFoundException({
+      message: "Seems like that you don't have account with this email!!",
+    });
+  }
+  if (!user.provider === ProviderEnum.System) {
+    BadRequestException({ message: "Cannot reset password for this account!" });
+  }
+  const cachedToken = await getFromCache(`USER:RESETPASSWORD:TOKEN:${email}`);
+  if (!cachedToken) {
+    BadRequestException({
+      message: "Invalid or expired token, please try again!",
+    });
+  }
+  const isCompare = await compare(token, cachedToken);
+  if (!isCompare) {
+    BadRequestException({
+      message: "Invalid or expired token, please try again!",
+    });
+  }
+  const hashedPassword = await hash(password);
+  user.password = hashedPassword;
+  await user.save();
+  await redisClient.del(`USER:RESETPASSWORD:TOKEN:${email}`);
+  return true;
 };
