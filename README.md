@@ -1,4 +1,4 @@
-# 📩 Sara7a Anonymous Messaging System API
+# 📩 Anonymous Messaging System API
 
 **Technical Data Specialist Showcase Project**
 
